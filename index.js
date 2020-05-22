@@ -17,6 +17,7 @@ app.get("/api", async(req, res) => {
     res.status(200).send(files);
 });
 
+//relative path
 app.get("*", async(req, res) => {
     const marsh = dirname + req.path;
     //to check for the existence of a file
@@ -93,10 +94,10 @@ app.post("*", async(req, res) => {
     const newPath = dirname + req.headers["copy"];
     try {
         //check for existence of file
-        if (fs.existsSync(marsh) && fs.statSync(marsh).isFile()) {
+        if (fs.existsSync(newPath) && fs.statSync(newPath).isFile()) {
             try {
                 res.status(200).send("Copied successfully");
-                await fs.copyFile(marsh, newPath, function(err) {
+                await fs.copyFile(newPath, marsh, function(err) {
                     if (err) {
                         res.status(404).send("Not Found");
                     }
@@ -122,7 +123,7 @@ async function storedFiles(dir, files_) {
         if (fs.statSync(name).isDirectory()) {
             storedFiles(name, files_);
         } else {
-            files_.push(name);
+            files_.push(path.relative(__dirname, name));
         }
     }
     return files_;
